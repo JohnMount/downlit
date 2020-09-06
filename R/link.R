@@ -282,11 +282,17 @@ href_package_ref <- function(package) {
   if (!is.null(reference_url)) {
     reference_url
   } else {
-    # Fall back to rdrr.io
-    if (is_base_package(package)) {
-      paste0("https://rdrr.io/r/", package)
+    package_href_function <- getOption("downlit.package_href_function", default = NULL)
+    if(is.null(package_href_function)) {
+      # Fall back to rdrr.io
+      if (is_base_package(package)) {
+        paste0("https://rdrr.io/r/", package)
+      } else {
+        paste0("https://rdrr.io/pkg/", package, "/man")
+      }
     } else {
-      paste0("https://rdrr.io/pkg/", package, "/man")
+      # Example: options(c("downlit.package_href_function" = function(package) { paste0("#", package) }))
+      package_href_function(package)
     }
   }
 }
